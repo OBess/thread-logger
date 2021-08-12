@@ -1,35 +1,57 @@
 // C++
 #include <iostream>
-#include <memory>
+#include <fstream>
+#include <thread>
+#include <chrono>
 
 // Custom
-#include "include/factory/console_creator.hpp"
-#include "include/factory/file_creator.hpp"
+#include "include/logger.hpp"
+
+using namespace std::chrono_literals;
+
+// Def
+void writeToTxt(const std::string &path);
+void addMsgs(const size_t &amount);
 
 int main()
 {
-   
-   // Test 1 - console logger
-   auto console_cr = std::make_unique<console_creator<console_logger>>();
-   auto console = console_cr->getLogger();
-   console->Log("Start work");
-   console->Log("Did something");
-   console->Log("End work");
-   console->Log("Message ", "with ", "variability size of", "values", " and ", 'i', 'n', " this ", "text are ", 10, " values.");
-   console->Log(12, ' ', 3.5);
+   // Init
+   Logger::setMaxSize(6);
 
-   // Test 2 - file logger
-   auto file_cr = std::make_unique<file_creator<file_logger>>("log.txt");
-   auto file = file_cr->getLogger();
-   file->Log("Start work");
-   file->Log("Did something");
-   file->Log("End work");
-   file->Log("Message ", "with ", "variability size of", "values", " and ", 'i', 'n', " this ", "text are ", 10, " values.");
-   file->Log(12, ' ', 3.5);
+   // Update
+   std::thread sender(addMsgs, 25);
+   std::thread sender2(addMsgs, 20);
+   std::thread sender3(addMsgs, 44);
+   std::thread writer(writeToTxt, "text.txt");
 
-   // Clear data
-   delete console;
-   delete file;
+   // Joins
+   sender.join();
+   sender2.join();
+   sender3.join();
+   writer.join();
 
    return EXIT_SUCCESS;
+}
+
+// Impl
+void writeToTxt(const std::string &path)
+{
+   std::ofstream file(path);
+
+   while (!Logger::queueEmpty())
+   {
+      auto tmp = Logger::getMsg();
+      file << tmp << '\n';
+      // std::cout << tmp << std::endl;
+      std::this_thread::sleep_for(50ms);
+   }
+}
+
+void addMsgs(const size_t &amount)
+{
+   for (size_t i = 0; i < amount; ++i)
+   {
+      Log("Sender " + std::to_string(i));
+      std::this_thread::sleep_for(25ms);
+   }
 }
