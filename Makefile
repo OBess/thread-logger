@@ -16,11 +16,11 @@ DEBUG_MODE = Debug
 RELEASE_MODE = Release
 
 BUILD_MODE = $(DEBUG_MODE)
-AUTO_RUN = $(TRUE)
+AUTO_RUN = $(FALSE)
 
 # Flags for two build modes
-Release_FLAGS = -O3 -std=c++17 -s -DNDEBUG
-Debug_FLAGS = -O0 -std=c++17 -g -Wall
+Release_FLAGS = -O3 -std=c++17 -s -DNDEBUG -pthread
+Debug_FLAGS = -O0 -std=c++17 -g -Wall -pthread
 
 # EXECUTABLE - main filename
 # SOURCES - returns list of all .cpp files
@@ -66,6 +66,7 @@ valgrind:
 
 # Remove folders with executable files
 clean: rm_debug rm_release rm_test
+	@rm text.txt
 
 rm_debug:
 	@rm -rf $(DEBUG_MODE)
