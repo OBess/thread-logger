@@ -16,7 +16,7 @@
 class Logger
 {
 private:
-    static inline std::tqueue<std::string> q;
+    static inline custom::tqueue<std::string> q;
 
 public:
     template <typename T>
