@@ -41,15 +41,15 @@ namespace custom
 
         T pop() noexcept
         {
-            if(m_storage.size() < m_maxSize)
-                std::unique_lock lk(q_operations_mutex);
-
             if (empty())
                 return T{};
+
+            q_operations_mutex.lock();
 
             auto copy = m_storage.front();
             m_storage.pop();
 
+            q_operations_mutex.unlock();
             cv.notify_one();
 
             return copy;
