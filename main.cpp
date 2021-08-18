@@ -38,7 +38,7 @@ void writeToTxt(const std::string &path)
 {
    std::ofstream file(path);
 
-   while (!Logger::queueEmpty())
+   while (!Logger::queueEmptySleep())
    {
       auto tmp = Logger::getMsg();
       file << tmp << '\n';

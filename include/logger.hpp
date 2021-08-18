@@ -37,6 +37,15 @@ public:
         return q.empty();
     }
 
+    static bool queueEmptySleep() noexcept
+    {
+        while (queueEmpty())
+        {
+        }
+
+        return q.empty();
+    }
+
     static void setMaxSize(size_t size) noexcept
     {
         q.setMaxSize(size);
